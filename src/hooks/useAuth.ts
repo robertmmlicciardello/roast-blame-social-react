@@ -22,14 +22,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
 // Mock authentication hook for demo purposes
 export const useAuthProvider = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -172,5 +164,5 @@ export const useAuthProvider = () => {
   };
 };
 
-// For the demo, we'll export the hook directly
-export { useAuthProvider as useAuth };
+// Export as useAuth for the demo
+export const useAuth = useAuthProvider;

@@ -337,7 +337,7 @@ const ReviewReportModal = ({ report, onUpdate, onCancel }: any) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <div>
             <h4 className="text-lg font-semibold text-white mb-3">Report Details</h4>
-            <div class="space-y-2">
+            <div className="space-y-2">
               <div><span className="text-gray-400">Reason:</span> <span className="text-white">{report.reason}</span></div>
               <div><span className="text-gray-400">Reported by:</span> <span className="text-white">{report.reportedBy}</span></div>
               <div><span className="text-gray-400">Reported at:</span> <span className="text-white">{report.reportedAt.toLocaleString()}</span></div>
