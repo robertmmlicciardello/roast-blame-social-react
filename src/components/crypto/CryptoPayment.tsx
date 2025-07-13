@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Bitcoin, Ethereum, DollarSign, Wallet, CheckCircle, AlertCircle } from 'lucide-react';
+import { Bitcoin, Coins, DollarSign, Wallet, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
@@ -30,7 +30,7 @@ export const CryptoPayment: React.FC<CryptoPaymentProps> = ({
 
   const cryptoIcons = {
     BTC: <Bitcoin className="h-6 w-6 text-orange-500" />,
-    ETH: <Ethereum className="h-6 w-6 text-blue-500" />,
+    ETH: <Coins className="h-6 w-6 text-blue-500" />,
     USDT: <DollarSign className="h-6 w-6 text-green-500" />
   };
 
@@ -116,6 +116,10 @@ export const CryptoPayment: React.FC<CryptoPaymentProps> = ({
     try {
       setPaymentStatus('processing');
       
+      if (!window.ethereum) {
+        throw new Error('MetaMask not available');
+      }
+
       const web3 = new (window as any).Web3(window.ethereum);
       const accounts = await web3.eth.getAccounts();
       
