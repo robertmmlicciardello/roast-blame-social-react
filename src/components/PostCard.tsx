@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Heart, ThumbsDown, Laugh, Share2, Flag, MessageCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -7,6 +6,8 @@ import { ReportModal } from './ReportModal';
 import { ShareModal } from './ShareModal';
 import { toast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
+import { CreatorTipping } from './crypto/CreatorTipping';
+import { NFTMinting } from './crypto/NFTMinting';
 
 interface PostCardProps {
   post: {
@@ -62,6 +63,16 @@ export const PostCard = ({ post }: PostCardProps) => {
   };
 
   const userReaction = getUserReaction();
+
+  const handleTipSent = (amount: number, currency: string) => {
+    console.log(`Tip sent: ${amount} ${currency} to post ${post.id}`);
+    // You could update the post with tip information here
+  };
+
+  const handleNFTMinted = (nftData: any) => {
+    console.log('NFT minted for post:', post.id, nftData);
+    // You could update the post to show it's been minted as NFT
+  };
 
   return (
     <>
@@ -159,6 +170,23 @@ export const PostCard = ({ post }: PostCardProps) => {
               <Laugh className={`h-5 w-5 ${userReaction === 'funny' ? 'fill-current' : ''}`} />
               <span>{post.reactions.funny}</span>
             </button>
+
+            {/* Creator Tipping */}
+            <CreatorTipping
+              postId={post.id}
+              creatorId={post.authorId}
+              creatorWallet="0x742B2f61F0b3b8fE26e726e43D73B9F0B1b65d0d" // This would come from user profile
+              onTipSent={handleTipSent}
+            />
+
+            {/* NFT Minting (Admin only) */}
+            <NFTMinting
+              postId={post.id}
+              postContent={post.content}
+              postImage={post.imageUrl}
+              creatorId={post.authorId}
+              onMintSuccess={handleNFTMinted}
+            />
           </div>
 
           {/* Share */}

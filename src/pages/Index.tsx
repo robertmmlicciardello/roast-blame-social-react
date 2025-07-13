@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { PostForm } from '@/components/PostForm';
@@ -7,6 +6,7 @@ import { AuthModal } from '@/components/auth/AuthModal';
 import { AdminLoginModal } from '@/components/admin/AdminLoginModal';
 import { useAuth } from '@/hooks/useAuth';
 import { AdPlaceholder } from '@/components/AdPlaceholder';
+import { PremiumSubscription } from '@/components/crypto/PremiumSubscription';
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -55,6 +55,9 @@ const Index = () => {
               </button>
             </div>
           )}
+
+          {/* Premium Subscription */}
+          <PremiumSubscription />
 
           {/* Ad Placeholder */}
           <AdPlaceholder />
