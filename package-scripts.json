@@ -1,0 +1,12 @@
+
+{
+  "scripts": {
+    "dev": "node scripts/setup-dev.js && vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "setup": "node scripts/setup-dev.js",
+    "check-env": "node -e \"console.log('Environment check:', process.env.NODE_ENV)\"",
+    "type-check": "tsc --noEmit"
+  }
+}

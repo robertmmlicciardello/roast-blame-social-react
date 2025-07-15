@@ -27,10 +27,21 @@ export const useCrypto = () => {
   const [walletAddress, setWalletAddress] = useState<string>('');
   const [transactions, setTransactions] = useState<CryptoTransaction[]>([]);
   const [loading, setLoading] = useState(false);
+  const [web3Available, setWeb3Available] = useState(false);
 
-  // Check wallet connection on mount
+  // Check Web3 and wallet availability
   useEffect(() => {
-    checkWalletConnection();
+    const checkWeb3Availability = () => {
+      const hasEthereum = typeof window !== 'undefined' && window.ethereum;
+      const hasWeb3 = typeof window !== 'undefined' && window.Web3;
+      setWeb3Available(!!(hasEthereum || hasWeb3));
+      
+      if (hasEthereum) {
+        checkWalletConnection();
+      }
+    };
+
+    checkWeb3Availability();
     loadUserTransactions();
   }, [user]);
 
@@ -83,7 +94,6 @@ export const useCrypto = () => {
 
   const saveUserWallet = async (address: string) => {
     try {
-      // In production, save to Firestore
       const userData = {
         userId: user?.uid,
         walletAddress: address,
@@ -123,7 +133,6 @@ export const useCrypto = () => {
     };
 
     try {
-      // Save to localStorage (in production, save to Firestore)
       const existingTransactions = JSON.parse(localStorage.getItem('roastblame_crypto_transactions') || '[]');
       existingTransactions.push(transaction);
       localStorage.setItem('roastblame_crypto_transactions', JSON.stringify(existingTransactions));
@@ -142,8 +151,19 @@ export const useCrypto = () => {
       throw new Error('Wallet not connected');
     }
 
+    if (!web3Available) {
+      throw new Error('Web3 not available. Please install MetaMask.');
+    }
+
     try {
-      const web3 = new (window as any).Web3(window.ethereum);
+      // Check if Web3 is loaded
+      if (!window.Web3) {
+        // Try to load Web3 dynamically
+        const Web3 = await import('web3');
+        window.Web3 = Web3.default || Web3;
+      }
+
+      const web3 = new window.Web3(window.ethereum);
       const accounts = await web3.eth.getAccounts();
       
       const transaction = {
@@ -170,28 +190,34 @@ export const useCrypto = () => {
       console.error('Error sending transaction:', error);
       throw error;
     }
-  }, [walletConnected, recordTransaction]);
+  }, [walletConnected, recordTransaction, web3Available]);
 
   const getWalletBalance = useCallback(async () => {
-    if (!walletConnected || !window.ethereum) {
+    if (!walletConnected || !window.ethereum || !web3Available) {
       return null;
     }
 
     try {
-      const web3 = new (window as any).Web3(window.ethereum);
+      if (!window.Web3) {
+        const Web3 = await import('web3');
+        window.Web3 = Web3.default || Web3;
+      }
+
+      const web3 = new window.Web3(window.ethereum);
       const balance = await web3.eth.getBalance(walletAddress);
       return web3.utils.fromWei(balance, 'ether');
     } catch (error) {
       console.error('Error getting balance:', error);
       return null;
     }
-  }, [walletConnected, walletAddress]);
+  }, [walletConnected, walletAddress, web3Available]);
 
   return {
     walletConnected,
     walletAddress,
     transactions,
     loading,
+    web3Available,
     connectWallet,
     disconnectWallet,
     recordTransaction,
